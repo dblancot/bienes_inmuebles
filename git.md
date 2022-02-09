@@ -115,3 +115,15 @@
 # EDITAR ARCHIVOS
     git mv nombre1 nombre2 (mv es mover, pero como es el mismo directorio es como renombrar)
     git rm archivo1 (borra el archivo)
+
+# GIT HUB
+## {primera carga}
+    git remote add origin [url]
+    git branch -M main
+    git push -u origin main
+## {cargar tags}
+    git push --tags
+## {ver a que origen estamos conectados}
+    git remote -v
+## {clonar un repositorio desde el terminal estando situados en la carpeta}
+    git clone [url]
