@@ -53,8 +53,10 @@
     git commit -am "[nombreCommit]"
 ## {modificar commit manualmente}
     git commit --amend
-## restaurar al último commit
+## {restaurar al último commit}
     git checkout -- .
+## {restaurar un archivo al último commit}
+    git checkout -- [nombreArchivo]
 
 # GIT RESET
 ## {volver a un commit antiguo sin deshacer lo hecho
@@ -89,6 +91,26 @@
     git tag -d [nombreTag]
 ## {ver tags}
     git tag
+
+# GIT REBASE
+## {situados en la rama secundaria}
+    git rebase [nombreRamaPrincipal]
+## {SQUASH - modo interactivo}
+    git rebase -i HEAD~4
+### [unircommit] Pulsar "a" para editar, marcar con s el commit que se quiere unir (coge el anterior tb), ESC, :wq! , :wq!
+
+# GIT STASH
+## {guardar el directorio de trabajo actual en el stash}
+    git stash
+## {lista de stash}
+    git stash list
+## {volver al stash 0 }
+    git stash pop
+## {volver un stash en concreto}
+    git stash apply stash@{2}
+## {borrar todos los stash}
+    git stash clear
+
 
 # EDITAR ARCHIVOS
     git mv nombre1 nombre2 (mv es mover, pero como es el mismo directorio es como renombrar)
