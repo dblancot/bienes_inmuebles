@@ -23,7 +23,7 @@ function navegacionResponsive () {
 
 function darkMode () {  
     
-    // Preferencias del sistema
+    // Preferencias del sistema (dark = true)
     const prefiereDarkMode = window.matchMedia('(prefers-color-scheme: dark)')
 
     systemDarkmode()  
@@ -54,8 +54,8 @@ function darkMode () {
         }
     });        
 
-    // Cada vez que hay reload pone el modo por defecto en el sistema operativo
-    if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
+    // Cada vez que hay reload (F5) pone el modo por defecto en el sistema operativo
+    if (String(window.performance.getEntriesByType("navigation")[0].type) === "reload") {
         sessionStorage.setItem('modo-oscuro', window.matchMedia('(prefers-color-scheme: dark)').matches)
     }
 
