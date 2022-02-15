@@ -2,6 +2,11 @@
     //Base de datos
     require '../../includes/config/database.php'; 
     $db = conectarDB();
+
+    // Consulta para obtener los vendedores
+    $consulta = "SELECT * FROM vendedores;";
+    $resultado = mysqli_query($db, $consulta); 
+
     
     // Array con mensajes de errores
     $errores = [];
@@ -30,6 +35,7 @@
         $wc = $_POST['wc'];
         $estacionamiento = $_POST['estacionamiento'];
         $vendedorID = $_POST['vendedor'];
+        $creado = date('Y/m/d');
 
         // Añadiendo los errores al array
         if(!$titulo) {
@@ -68,14 +74,15 @@
         if(empty($errores)){
 
             // Insertar en la base de datos
-            $query = " INSERT INTO propiedades (titulo, precio, descripcion, habitaciones, wc, estacionamiento, vendedorID) VALUES ('$titulo', '$precio', '$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$vendedorID') ";
+            $query = " INSERT INTO propiedades (titulo, precio, descripcion, habitaciones, wc, estacionamiento, creado, vendedorID) VALUES ('$titulo', '$precio', '$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$creado', '$vendedorID') ";
             
             // echo $query;
 
             $resultado = mysqli_query($db, $query); // Ejecuta la consulta $query en la bbdd %db
 
             if($resultado) {
-                echo "Insertado Correctamente";
+                // Redireccionar
+                header('Location: /admin');
             }
 
         }
@@ -139,8 +146,10 @@
                 
                 <select name ="vendedor">
                     <option value="">-- Seleccione --</option>
-                    <option value="1">Diego</option>
-                    <option value="2">Irene</option>
+                    <?php while($row = mysqli_fetch_assoc($resultado)): ?>
+                        <option <?php echo $vendedorID === $row['id'] ? 'selected' : ''; ?>  value="<?php echo $row['id'] ?>"> <?php echo $row['nombre'] . ' ' . $row['apellido'] ?> </option>
+                    <?php endwhile; ?>                     
+                    
                 </select>
 
             </fieldset>
