@@ -1,8 +1,19 @@
 <?php	
 
+    // Importar la conexión de la bbdd
+    require '../includes/config/database.php'; 
+    $db = conectarDB();
+
+    // Escribir la Query
+    $query = "SELECT * FROM propiedades;";    
+
+    // Consultar la BBDD
+    $resultadoQuery = mysqli_query($db, $query); 
+
     // guardo lo que me llega por la url
     $resultado = $_GET['resultado'] ?? null; // busca el valor y si no existe le asigna null
 
+    // incluye el template de header
     require '../includes/funciones.php';    
     incluirTemplate('header');
 ?>
@@ -17,8 +28,39 @@
 
         <a href="/admin/propiedades/crear.php" class="boton boton-verde">Nueva Propiedad</a>
 
+        <table class="propiedades">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Imágen</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody> <!-- Mostrar los Resultados -->
+                    <?php while( $propiedad = mysqli_fetch_assoc($resultadoQuery) ) : ?>
+                    <tr>
+                        <td> <span class="id"><?php echo $propiedad['id']; ?> </span></td>
+                        <td> <?php echo $propiedad['titulo']; ?> </td>
+                        <td> <img class="imagen-tabla" src="/imagenes/<?php echo $propiedad['imagen']; ?>" ></td>
+                        <td> <?php echo $propiedad['precio']; ?> € </td>
+                        <td>
+                            <a href="#" class="boton-rojo-block">Eliminar</a>
+                            <a href="#" class="boton-amarillo-block">Actualizar</a>
+                        </td>
+                    </tr>
+                    <?php endwhile; ?>
+                </tbody>
+        </table>
+
     </main>
 
 <?php 
+
+    //Cerrar la conexión
+    mysqli_close($db);
+
     incluirTemplate('footer');
 ?>

@@ -1,5 +1,5 @@
 <?php	
-    //Base de datos
+    // Importar la conexión de la bbdd
     require '../../includes/config/database.php'; 
     $db = conectarDB();
 

@@ -43,4 +43,18 @@
         }
 
     }
+
+    .propiedades {
+        color: $blanco;
+
+        tbody {
+            background-color: $grisOscuro;        
+        }
+
+        .id {
+            color: $verde;
+        }
+    }
+
+    
 }

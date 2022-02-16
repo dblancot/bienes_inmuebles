@@ -15,3 +15,44 @@
         background-color: $verde;
     }
 }
+
+table.propiedades {
+    margin-top: 4rem;
+    width: 100%;
+    border-spacing: 0.3rem;    
+
+    thead {
+        background-color: $verde;
+        
+
+        th {
+            color: $blanco;
+            padding: 2rem;
+            text-align: center;            
+        }
+    }
+    
+    tbody {
+        background-color: $gris;        
+    }
+
+    tr {
+        text-align: center;        
+
+        .id {
+            font-weight: $bold;
+        }        
+    }    
+
+    .imagen-tabla {
+        width: 15rem;
+        margin: 0 auto;  
+    }
+
+    a {
+        width: 70%;
+        margin: 1rem auto;                 
+    }
+
+
+}
