@@ -1,10 +1,204 @@
-<?php	
+<?php
+
+    // Guardo la id de la propiedad a modificar en una variable (después de sanitizarla)
+    $id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
+
+    // Si la id no es un INT redirecciono a página principal
+    if(!$id) {
+        header('Location: /admin');
+    }
+    
+    // Importar la conexión de la bbdd
+    require '../../includes/config/database.php'; 
+    $db = conectarDB();
+
+    // Consulta para obtener los datos de la propiedad
+    $consulta = "SELECT * FROM propiedades WHERE id = ${id}";
+    $resultado = mysqli_query($db, $consulta); 
+    $propiedad = mysqli_fetch_assoc($resultado);
+
+    // Consulta para obtener los vendedores
+    $consulta = "SELECT * FROM vendedores;";
+    $resultado = mysqli_query($db, $consulta); 
+    
+    // Array con mensajes de errores
+    $errores = [];
+
+    // Declaración de variables inicializándolas con los valores de propiedad correspondientes 
+    $titulo = $propiedad['titulo'];
+    $precio = $propiedad['precio'];
+    $descripcion = $propiedad['descripcion'];
+    $habitaciones = $propiedad['habitaciones'];
+    $wc = $propiedad['wc'];
+    $estacionamiento = $propiedad['estacionamiento'];
+    $vendedorID = $propiedad['vendedorID'];
+    $imagenPropiedad = $propiedad['imagen'];
+
+    // Ejecuta el código cuando el usuario pulsa "Crear Propiedad"
+    if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        // asigno el valor del formulario a las variables
+        $titulo = mysqli_real_escape_string( $db, $_POST['titulo'] );
+        $precio = mysqli_real_escape_string( $db, $_POST['precio'] );
+        $descripcion = mysqli_real_escape_string( $db, $_POST['descripcion'] );
+        $habitaciones = mysqli_real_escape_string( $db, $_POST['habitaciones'] );
+        $wc = mysqli_real_escape_string( $db, $_POST['wc'] );
+        $estacionamiento = mysqli_real_escape_string( $db, $_POST['estacionamiento'] );
+        $vendedorID = mysqli_real_escape_string( $db, $_POST['vendedor'] );
+        $creado = date('Y/m/d');
+
+        // Asignar files hacia una variable
+        $imagen = $_FILES['imagen'];
+        
+        // Añadiendo los errores al array
+        if(!$titulo) {
+            $errores[] = "Debes añadir un título";
+        }
+
+        if(!$precio) {
+            $errores[] = "El precio es obligatorio";
+        }
+
+        if( strlen($descripcion) < 50) {
+            $errores[] = "La descripción es obligatoria y debe tener al menos 50 caracteres";
+        }
+
+        if(!$habitaciones) {
+            $errores[] = "El número de habitaciones es obligatorio";
+        }
+
+        if(!$wc) {
+            $errores[] = "El número de baños es obligatorio";
+        }
+
+        if(!$estacionamiento) {
+            $errores[] = "El número de plazas de garaje es obligatorio";
+        }
+
+        if(!$vendedorID) {
+            $errores[] = "Elige un vendedor";
+        }
+        
+        //Validar por tamaño (1Mb máximo)
+        $medida = 1000 * 1000;
+        if($imagen['size'] > $medida) {
+            $errores[] = 'La imagen tiene que ser menor de 100Kb';
+        }
+
+        // Revisar que el array de errores está vacía, si  no hay errores subimos archivo e insertamos en la bbdd
+        if(empty($errores)){
+
+            // ** SUBIDA DE ARCHIVOS ** //
+
+            // Crear carpeta
+            $carpetaImagenes = '../../imagenes/';
+
+            if(!is_dir($carpetaImagenes)) {
+                mkdir($carpetaImagenes);
+            }
+
+            // Si se sube una nueva imagen, borramos la existente y cargamos la nueva
+            if($imagen['name']) {
+                unlink($carpetaImagenes . $propiedad['imagen']);
+
+                // Generar nombre único para las imagenes que se suben
+                $nombreImagen = md5( uniqid( rand(), true)) . ".jpg";
+
+                // Subir la imagen
+                move_uploaded_file( $imagen['tmp_name'], $carpetaImagenes . $nombreImagen );
+            } else {
+                $nombreImagen = $propiedad['imagen'];
+            }           
+
+            // Insertar en la base de datos
+            $query = "  UPDATE propiedades 
+                        SET titulo = '${titulo}'
+                            ,precio = '${precio}'
+                            ,imagen = '${nombreImagen}' 
+                            ,descripcion = '${descripcion}'
+                            ,habitaciones = ${habitaciones}    
+                            ,wc = ${wc} 
+                            ,estacionamiento = ${estacionamiento} 
+                            ,vendedorID = ${vendedorID}
+                        WHERE id = ${id}  
+                        ";
+                      
+            // Ejecuta la consulta $query en la bbdd %db
+            $resultado = mysqli_query($db, $query); 
+
+            // Redireccionar enviando resultado = 1 por el GET
+            if($resultado) {               
+                header('Location: /admin?resultado=2');
+            }
+        } 
+    }
+
     require '../../includes/funciones.php';    
     incluirTemplate('header');
+
 ?>
 
     <main class="contenedor seccion">
-        <h1>Actualizar</h1>
+
+        <h1>Actualizar Propiedad</h1>
+
+        <a href="/admin" class="boton boton-verde">Volver</a>
+
+        // Muestra los errores
+        <?php foreach($errores as $error): ?>
+        <div class="alerta error">
+            <?php echo $error; ?> 
+        </div>                   
+        <?php endforeach; ?>     
+
+        <form class="formulario" method="POST" enctype="multipart/form-data" >
+
+            <fieldset>
+                <legend>Información General</legend>
+
+                <label for="titulo">Titulo:</label>
+                <input type="text" id="titulo" name="titulo" placeholder="Título Propiedad" value="<?php echo $titulo; ?>">
+
+                <label for="precio">Precio:</label>
+                <input type="number" id="precio" name="precio" placeholder="Precio Propiedad" value="<?php echo $precio; ?>">
+
+                <label for="imagen">Imagen:</label>
+                <input type="file" id="imagen" name="imagen" accept="image/jpeg, image/png">
+
+                <img src="/imagenes/<?php echo $imagenPropiedad ?>" alt="Imagen de la propiedad" class="imagen-small">
+
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion"><?php echo $descripcion; ?></textarea>
+            </fieldset>
+
+            <fieldset>
+                <legend>Información de la Propiedad</legend>
+
+                <label for="habitaciones">Habitaciones:</label>
+                <input type="number" id="habitaciones" name="habitaciones" placeholder="Ej. 3" min="1" max="9" value="<?php echo $habitaciones; ?>">
+
+                <label for="wc">Baños:</label>
+                <input type="number" id="wc" name="wc" placeholder="Ej. 1" min="1" max="9" value="<?php echo $wc; ?>">
+
+                <label for="estacionamiento">Plazas de garaje:</label>
+                <input type="number" id="estacionamiento" name="estacionamiento" placeholder="Ej. 1" min="1" max="9" value="<?php echo $estacionamiento; ?>">
+            </fieldset>
+
+            <fieldset>
+                <legend>Vendedor</legend>
+                
+                <select name ="vendedor">
+                    <option value="">-- Seleccione --</option>
+                    <?php while($row = mysqli_fetch_assoc($resultado)): ?>
+                        <option <?php echo $vendedorID === $row['id'] ? 'selected' : ''; ?>  value="<?php echo $row['id'] ?>"> <?php echo $row['nombre'] . ' ' . $row['apellido'] ?> </option>
+                    <?php endwhile; ?>                     
+                </select>
+            </fieldset>
+
+            <input type="submit" value="Actualizar Propiedad" class="boton boton-verde">
+
+        </form>   
+
     </main>
 
 <?php 
