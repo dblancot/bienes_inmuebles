@@ -49,9 +49,11 @@ table.propiedades {
         margin: 0 auto;  
     }
 
-    a {
+    a,
+    input {
         width: 70%;
-        margin: 1rem auto;                 
+        margin: 1rem auto;
+        height: 4.8rem;                
     }
 }
 

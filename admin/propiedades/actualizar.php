@@ -13,12 +13,17 @@
     $db = conectarDB();
 
     // Consulta para obtener los datos de la propiedad
-    $consulta = "SELECT * FROM propiedades WHERE id = ${id}";
+    $consulta = "   SELECT * 
+                    FROM propiedades 
+                    WHERE id = ${id}
+                ";
     $resultado = mysqli_query($db, $consulta); 
     $propiedad = mysqli_fetch_assoc($resultado);
 
     // Consulta para obtener los vendedores
-    $consulta = "SELECT * FROM vendedores;";
+    $consulta = "   SELECT *   
+                    FROM vendedores
+                ";
     $resultado = mysqli_query($db, $consulta); 
     
     // Array con mensajes de errores
