@@ -1,43 +1,78 @@
-<?php	
+<?php
+
+    // Guardo la id de la propiedad a modificar en una variable (después de sanitizarla)
+    $id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
+
+    // Si la id no es un INT redirecciono a página principal
+    if(!$id) {
+        header('Location: /');
+    }
+    
+    // Importar la conexión de la bbdd
+    require 'includes/config/database.php'; 
+    $db = conectarDB();
+
+    // Consulta para obtener los datos de la propiedad
+    $consulta = "   SELECT * 
+                    FROM propiedades 
+                    WHERE id = ${id}
+                ";
+    $resultado = mysqli_query($db, $consulta);
+    
+    // Si la id no es válida redirecciono a página principal
+    if(!$resultado->num_rows) {
+        header('Location: /');
+    }
+
+    $propiedad = mysqli_fetch_assoc($resultado);
+
+    // Declaración de variables inicializándolas con los valores de propiedad correspondientes 
+    $titulo = $propiedad['titulo'];
+    $precio = $propiedad['precio'];
+    $descripcion = $propiedad['descripcion'];
+    $habitaciones = $propiedad['habitaciones'];
+    $wc = $propiedad['wc'];
+    $estacionamiento = $propiedad['estacionamiento'];
+    $vendedorID = $propiedad['vendedorID'];
+    $imagenPropiedad = $propiedad['imagen'];
+
     require 'includes/funciones.php';    
     incluirTemplate('header');
 ?>
 
     <main class="contenedor seccion contenido-centrado">
-        <h1>Casa en Venta frente al bosque</h1>
+        <h1><?php echo $titulo; ?></h1>
                 
-        <picture>
-            <source srcset="build/img/destacada.webp" type="image/webp"> 
-            <source srcset="build/img/destacada.jpg" type="image/jpeg"> 
-            <img loading="lazy" src="build/img/destacada.jpg" alt="Imagen de la propiedad">
+        <picture>            
+            <img loading="lazy" src="imagenes/<?php echo $imagenPropiedad; ?>" alt="Imagen de la propiedad">
         </picture>         
 
         <div class="resumen-propiedad">
-            <p class="precio">3.000.000€</p>
+            <p class="precio"><?php echo $precio; ?> €</p>
             <ul class="iconos-caracteristicas">
                 <li>
                     <img class="icono" loading="lazy" src="build/img/icono_wc.svg" alt="icono wc">
-                    <p>3</p>
+                    <p><?php echo $wc; ?></p>
                 </li>
                 <li>
                     <img class="icono" loading="lazy" src="build/img/icono_estacionamiento.svg" alt="icono estacionamiento">
-                    <p>3</p>
+                    <p><?php echo $estacionamiento; ?></p>
                 </li>
                 <li>
                     <img class="icono" loading="lazy" src="build/img/icono_dormitorio.svg" alt="icono dormitorio">
-                    <p>4</p>
+                    <p><?php echo $habitaciones; ?></p>
                 </li>
             </ul>
             <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus, accusantium quas. Iure inventore eius temporibus adipisci tenetur, rem natus, cupiditate repellendus assumenda placeat est voluptatum illo labore quis a officia. Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi aperiam architecto quo dignissimos nulla dolor, animi et iste cum deleniti hic possimus minus, voluptatem vel, magni debitis impedit nobis. Praesentium.
-            </p>
-            <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum perspiciatis quia autem doloribus hic ea eum numquam expedita laudantium eligendi veritatis exercitationem incidunt dolorem ipsa temporibus, aperiam nesciunt illum veniam?
-            </p>
+                <?php echo $descripcion; ?>  
+           </p>
 
         </div>
     </main>
 
 <?php 
     incluirTemplate('footer');
+
+    //Cerrar la conexión
+    mysqli_close($db);
 ?>

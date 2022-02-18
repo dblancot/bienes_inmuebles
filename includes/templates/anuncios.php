@@ -42,8 +42,6 @@
             </div> <!--anuncio-->
             <?php endwhile; ?>                      
         </div> <!--contenedor anuncios-->
-
-
     
 <?php
 
