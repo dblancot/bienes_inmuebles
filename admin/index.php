@@ -5,7 +5,7 @@
     $db = conectarDB();
 
     // Escribir la Query
-    $query = "SELECT * FROM propiedades;";    
+    $query = "SELECT * FROM propiedades";    
 
     // Consultar la BBDD
     $resultadoQuery = mysqli_query($db, $query); 
