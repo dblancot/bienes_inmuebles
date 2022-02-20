@@ -1,4 +1,13 @@
-<?php	
+<?php
+
+    // Si no está autenticado vuelve a inicio
+    require '../../includes/funciones.php';
+    $auth = estaAutenticado();
+
+    if(!$auth) {
+        header('Location: /');
+    } 
+    
     // Importar la conexión de la bbdd
     require '../../includes/config/database.php'; 
     $db = conectarDB();
@@ -124,8 +133,7 @@
         
 
     }
-
-    require '../../includes/funciones.php';    
+     
     incluirTemplate('header');
 
 ?>

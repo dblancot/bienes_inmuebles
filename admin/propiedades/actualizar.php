@@ -1,5 +1,13 @@
 <?php
 
+    // Si no está autenticado vuelve a inicio
+    require '../../includes/funciones.php';
+    $auth = estaAutenticado();
+
+    if(!$auth) {
+        header('Location: /');
+    } 
+
     // Guardo la id de la propiedad a modificar en una variable (después de sanitizarla)
     $id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
 
@@ -137,8 +145,7 @@
             }
         } 
     }
-
-    require '../../includes/funciones.php';    
+       
     incluirTemplate('header');
 
 ?>
@@ -149,7 +156,7 @@
 
         <a href="/admin" class="boton boton-verde">Volver</a>
 
-        // Muestra los errores
+        <!-- Muestra los errores -->
         <?php foreach($errores as $error): ?>
         <div class="alerta error">
             <?php echo $error; ?> 
