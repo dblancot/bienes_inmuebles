@@ -1,7 +1,7 @@
 <?php
 
     // Importar la conexión
-    require 'includes/config/database.php';
+    require 'includes/app.php'; 
     $db = conectarDB();
 
     // Array de errores
@@ -52,8 +52,7 @@
     }
 
 
-    //Incluye el header
-    require 'includes/funciones.php';    
+    //Incluye el header   
     incluirTemplate('header');
 ?>
 

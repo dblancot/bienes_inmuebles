@@ -8,8 +8,7 @@
         header('Location: /');
     }
     
-    // Importar la conexión de la bbdd
-    require 'includes/config/database.php'; 
+    require 'includes/app.php';    
     $db = conectarDB();
 
     // Consulta para obtener los datos de la propiedad
@@ -36,7 +35,6 @@
     $vendedorID = $propiedad['vendedorID'];
     $imagenPropiedad = $propiedad['imagen'];
 
-    require 'includes/funciones.php';    
     incluirTemplate('header');
 ?>
 
