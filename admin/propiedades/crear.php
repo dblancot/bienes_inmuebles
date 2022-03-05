@@ -32,9 +32,7 @@
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Instancio la propiedad
-        $propiedad = new Propiedad($_POST);
-
-        // debug($propiedad);
+        $propiedad = new Propiedad($_POST);        
 
         // guardo la propiedad en la bbdd
         $propiedad->guardar();
@@ -113,8 +111,7 @@
             // Subir la imagen
             move_uploaded_file( $imagen['tmp_name'], $carpetaImagenes . $nombreImagen );
             
-            // Insertar en la base de datos
-            $query = " INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, vendedorID) VALUES ('$titulo', '$precio', '$nombreImagen', '$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$creado', '$vendedorID') ";
+            
             
             // echo $query;
 
