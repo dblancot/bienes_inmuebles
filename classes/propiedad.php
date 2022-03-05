@@ -11,6 +11,9 @@ class Propiedad {
     //Array con el nombre de las columnas de la BBDD
     protected static $columnasDB = ['id', 'titulo', 'precio', 'imagen', 'descripcion', 'habitaciones', 'wc', 'estacionamiento', 'creado', 'vendedorID'];
     
+    //Validación
+    protected static $errores = [];
+
     public $id;
     public $titulo;
     public $precio;
@@ -69,6 +72,7 @@ class Propiedad {
         return $atributos;
     }
 
+    // Sanitización    
     public function sanitizarAtributos() {
         $atributos = $this->atributos();
         $sanitizado = [];
@@ -78,6 +82,57 @@ class Propiedad {
         }
 
         return $sanitizado;
-    }    
+    }  
+    
+    // Validación
+    public static function getErrores() {
+        return self::$errores;
+    }
+
+    public function validar() {
+
+        // Añadiendo los errores al array
+        if(!$this->titulo) {
+            self::$errores[] = "Debes añadir un título";
+        }
+
+        if(!$this->precio) {
+            self::$errores[] = "El precio es obligatorio";
+        }
+
+        if( strlen($this->descripcion) < 50) {
+            self::$errores[] = "La descripción es obligatoria y debe tener al menos 50 caracteres";
+        }
+
+        if(!$this->habitaciones) {
+            self::$errores[] = "El número de habitaciones es obligatorio";
+        }
+
+        if(!$this->wc) {
+            self::$errores[] = "El número de baños es obligatorio";
+        }
+
+        if(!$this->estacionamiento) {
+            self::$errores[] = "El número de plazas de garaje es obligatorio";
+        }
+
+        if(!$this->vendedorID) {
+            self::$errores[] = "Elige un vendedor";
+        }
+/*
+        if(!$this->imagen['name'] || $this->imagen['error']) {
+            self::$errores[] = 'La Imagen es Obligatoria';
+        }
+        
+        //Validar por tamaño (1Mb máximo)
+        $medida = 1000 * 1000;
+        if($this->imagen['size'] > $medida) {
+            self::$errores[] = 'La imagen tiene que ser menor de 100Kb';
+        }
+*/
+        return self::$errores;
+       
+    }
+
 
 }

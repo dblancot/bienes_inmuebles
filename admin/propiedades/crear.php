@@ -16,7 +16,7 @@
 
     
     // Array con mensajes de errores
-    $errores = [];
+    $errores = Propiedad::getErrores();
 
     // Declaración de variables    
     $titulo = '';
@@ -32,71 +32,19 @@
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Instancio la propiedad
-        $propiedad = new Propiedad($_POST);        
-
-        // guardo la propiedad en la bbdd
-        $propiedad->guardar();
-
-        exit;
-
-        $titulo = mysqli_real_escape_string( $db, $_POST['titulo'] );
-        $precio = mysqli_real_escape_string( $db, $_POST['precio'] );
-        $descripcion = mysqli_real_escape_string( $db, $_POST['descripcion'] );
-        $habitaciones = mysqli_real_escape_string( $db, $_POST['habitaciones'] );
-        $wc = mysqli_real_escape_string( $db, $_POST['wc'] );
-        $estacionamiento = mysqli_real_escape_string( $db, $_POST['estacionamiento'] );
-        $vendedorID = mysqli_real_escape_string( $db, $_POST['vendedor'] );
-        $creado = date('Y/m/d');
-
-        // Asignar files hacia una variable
-        $imagen = $_FILES['imagen'];
-
+        $propiedad = new Propiedad($_POST);
         
-        // Añadiendo los errores al array
-        if(!$titulo) {
-            $errores[] = "Debes añadir un título";
-        }
-
-        if(!$precio) {
-            $errores[] = "El precio es obligatorio";
-        }
-
-        if( strlen($descripcion) < 50) {
-            $errores[] = "La descripción es obligatoria y debe tener al menos 50 caracteres";
-        }
-
-        if(!$habitaciones) {
-            $errores[] = "El número de habitaciones es obligatorio";
-        }
-
-        if(!$wc) {
-            $errores[] = "El número de baños es obligatorio";
-        }
-
-        if(!$estacionamiento) {
-            $errores[] = "El número de plazas de garaje es obligatorio";
-        }
-
-        if(!$vendedorID) {
-            $errores[] = "Elige un vendedor";
-        }
-
-        if(!$imagen['name'] || $imagen['error']) {
-            $errores[] = 'La Imagen es Obligatoria';
-        }
-        
-        //Validar por tamaño (1Mb máximo)
-        $medida = 1000 * 1000;
-        if($imagen['size'] > $medida) {
-            $errores[] = 'La imagen tiene que ser menor de 100Kb';
-        }
-
-        // echo "<pre>";
-        // var_dump($errores);
-        // echo "</pre>";
-
+        // Verifico que el formulario está bien cubierto
+        $errores = $propiedad->validar();
+       
         // Revisar que el array de errores está vacía
-        if(empty($errores)){
+        if(empty($errores)){            
+            
+            // guardo la propiedad en la bbdd
+            $propiedad->guardar();        
+
+            // Asignar files hacia una variable
+            $imagen = $_FILES['imagen'];
 
             //** SUBIDA DE ARCHIVOS */
 
@@ -139,12 +87,11 @@
 
         <a href="/admin" class="boton boton-verde">Volver</a>
 
+        <!-- Inserto los errores en pantalla -->
         <?php foreach($errores as $error): ?>
-
         <div class="alerta error">
             <?php echo $error; ?> 
-        </div>           
-         
+        </div>                   
         <?php endforeach; ?>     
 
         <form class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data" >
