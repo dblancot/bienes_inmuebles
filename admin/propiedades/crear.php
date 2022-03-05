@@ -37,6 +37,8 @@
         // guardo la propiedad en la bbdd
         $propiedad->guardar();
 
+        exit;
+
         $titulo = mysqli_real_escape_string( $db, $_POST['titulo'] );
         $precio = mysqli_real_escape_string( $db, $_POST['precio'] );
         $descripcion = mysqli_real_escape_string( $db, $_POST['descripcion'] );
