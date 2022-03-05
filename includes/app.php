@@ -6,5 +6,5 @@ require __DIR__ . '/../vendor/autoload.php'; // Cargo autoload de classes
 
 use App\Propiedad;
 
-$propiedad = new Propiedad;
+
 

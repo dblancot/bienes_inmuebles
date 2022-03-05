@@ -1,15 +1,13 @@
 <?php
 
     // Si no está autenticado vuelve a inicio
-    require '../../includes/funciones.php';
-    $auth = estaAutenticado();
+    require '../../includes/app.php';
 
-    if(!$auth) {
-        header('Location: /');
-    } 
+    use App\Propiedad;
+
+    // Si no está autenticado lo mando al index
+    estaAutenticado();
     
-    // Importar la conexión de la bbdd
-    require '../../includes/config/database.php'; 
     $db = conectarDB();
 
     // Consulta para obtener los vendedores
@@ -33,14 +31,13 @@
     // Ejecuta el código cuando el usuario pulsa "Crear Propiedad"
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        // echo "<pre>";
-        // var_dump($_POST);
-        // echo "</pre>";
+        // Instancio la propiedad
+        $propiedad = new Propiedad($_POST);
 
-        // echo "<pre>";
-        // var_dump($_FILES);
-        // echo "</pre>";
+        // debug($propiedad);
 
+        // guardo la propiedad en la bbdd
+        $propiedad->guardar();
 
         $titulo = mysqli_real_escape_string( $db, $_POST['titulo'] );
         $precio = mysqli_real_escape_string( $db, $_POST['precio'] );
@@ -186,12 +183,11 @@
             <fieldset>
                 <legend>Vendedor</legend>
                 
-                <select name ="vendedor">
+                <select name ="vendedorID">
                     <option value="">-- Seleccione --</option>
                     <?php while($row = mysqli_fetch_assoc($resultado)): ?>
                         <option <?php echo $vendedorID === $row['id'] ? 'selected' : ''; ?>  value="<?php echo $row['id'] ?>"> <?php echo $row['nombre'] . ' ' . $row['apellido'] ?> </option>
-                    <?php endwhile; ?>                     
-                    
+                    <?php endwhile; ?>                                
                 </select>
 
             </fieldset>

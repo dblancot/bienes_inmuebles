@@ -7,15 +7,17 @@ function incluirTemplate( string $nombre, bool $inicio = false ) {
     include TEMPLATES_URL . "/${nombre}.php";
 }
 
-function estaAutenticado() : bool {
-    
+function estaAutenticado() {    
     session_start();
-    $auth = $_SESSION['login'];
-
-    if($auth) {
-        return true;
+    
+    if(!$_SESSION['login']) { // Si no está autenticado lo mando al index
+        header('Location: /');
     }
+}
 
-    return false;
-
+function debug($variable) {    
+    echo "<pre>";
+    var_dump($variable);
+    echo "</pre>";
+    exit;
 }
