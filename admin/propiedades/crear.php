@@ -4,6 +4,7 @@
     require '../../includes/app.php';
 
     use App\Propiedad;
+    use Intervention\Image\ImageManagerStatic as Image;
 
     // Si no está autenticado lo mando al index
     estaAutenticado();
@@ -13,9 +14,8 @@
     // Consulta para obtener los vendedores
     $consulta = "SELECT * FROM vendedores;";
     $resultado = mysqli_query($db, $consulta); 
-
     
-    // Array con mensajes de errores
+    // Inicialización de Array con mensajes de errores para que no sea undefined
     $errores = Propiedad::getErrores();
 
     // Declaración de variables    
@@ -27,55 +27,45 @@
     $estacionamiento = '';
     $vendedorID = '';
 
-
     // Ejecuta el código cuando el usuario pulsa "Crear Propiedad"
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Instancio la propiedad
-        $propiedad = new Propiedad($_POST);
-        
+        $propiedad = new Propiedad($_POST);        
+
+        // Generar nombre único para las imagenes que se suben
+        $nombreImagen = md5( uniqid( rand(), true)) . ".jpg";
+
+        //  Si existe imagen, se le hace resize con intervention
+        if($_FILES['imagen']['tmp_name']) {
+
+            $image = Image::make($_FILES['imagen']['tmp_name'])->fit(800,600);
+
+            // Seteo el nombre de la imagen en la instacia de la clase
+            $propiedad->setImagen($nombreImagen);
+        }
+                
         // Verifico que el formulario está bien cubierto
         $errores = $propiedad->validar();
        
-        // Revisar que el array de errores está vacía
-        if(empty($errores)){            
+        // Si no hay errores en la validación guarda todo
+        if(empty($errores)){         
+                        
+            // Crear carpeta imagenes si no existe
+            if(!is_dir(CARPETA_IMAGENES)) {
+            mkdir(CARPETA_IMAGENES);        }
+                       
+            // Guarda la imagen en el servidor
+            $image->save(CARPETA_IMAGENES . $nombreImagen);
             
-            // guardo la propiedad en la bbdd
-            $propiedad->guardar();        
-
-            // Asignar files hacia una variable
-            $imagen = $_FILES['imagen'];
-
-            //** SUBIDA DE ARCHIVOS */
-
-            // Crear carpeta
-            $carpetaImagenes = '../../imagenes/';
-
-            if(!is_dir($carpetaImagenes)) {
-                mkdir($carpetaImagenes);
-            }
-
-            // Generar nombre único para las imagenes que se suben
-            $nombreImagen = md5( uniqid( rand(), true)) . ".jpg";
-
-            // Subir la imagen
-            move_uploaded_file( $imagen['tmp_name'], $carpetaImagenes . $nombreImagen );
-            
-            
-            
-            // echo $query;
-
-            $resultado = mysqli_query($db, $query); // Ejecuta la consulta $query en la bbdd %db
-
+            // Guarda la propiedad en la bbdd
+            $resultado = $propiedad->guardar();
+           
             if($resultado) {
                 // Redireccionar
                 header('Location: /admin?resultado=1');
             }
-
-        }
-
-        
-
+        }  
     }
      
     incluirTemplate('header');

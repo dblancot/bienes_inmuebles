@@ -38,7 +38,7 @@ class Propiedad {
         $this->id = $args['id'] ??  '';
         $this->titulo = $args['titulo'] ??  '';
         $this->precio = $args['precio'] ??  '';
-        $this->imagen = $args['imagen'] ??  'imagen.jpg';
+        $this->imagen = $args['imagen'] ??  '';
         $this->descripcion = $args['descripcion'] ??  '';
         $this->habitaciones = $args['habitaciones'] ??  '';
         $this->wc = $args['wc'] ??  '';
@@ -59,7 +59,9 @@ class Propiedad {
         // Insertar en la base de datos
         $query = " INSERT INTO propiedades ($stringKeys) VALUES ($stringValues) "; 
 
-        self::$db->query($query); // Ejecuto la query en la BBDD
+        $resultado = self::$db->query($query); // Ejecuto la query en la BBDD
+
+        return $resultado;
     }
 
     // Meto en el array $atributos el valor de cada columna
@@ -83,6 +85,15 @@ class Propiedad {
 
         return $sanitizado;
     }  
+
+    // Subida de archivos
+    public function setImagen($imagen){
+        // Asigna al atributo imagen el nombre de la imagen.
+        if($imagen) {
+            $this->imagen = $imagen;
+        }
+
+    }
     
     // Validación
     public static function getErrores() {
@@ -119,17 +130,11 @@ class Propiedad {
         if(!$this->vendedorID) {
             self::$errores[] = "Elige un vendedor";
         }
-/*
-        if(!$this->imagen['name'] || $this->imagen['error']) {
+
+        if(!$this->imagen) {
             self::$errores[] = 'La Imagen es Obligatoria';
         }
         
-        //Validar por tamaño (1Mb máximo)
-        $medida = 1000 * 1000;
-        if($this->imagen['size'] > $medida) {
-            self::$errores[] = 'La imagen tiene que ser menor de 100Kb';
-        }
-*/
         return self::$errores;
        
     }
