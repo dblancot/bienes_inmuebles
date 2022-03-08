@@ -22,3 +22,9 @@ function debug($variable) {
     echo "</pre>";
     exit;
 }
+
+// Evita inyección de HTML
+function s($html) : string {
+    $s = htmlspecialchars($html);
+    return $s;
+}
