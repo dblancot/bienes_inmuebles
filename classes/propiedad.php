@@ -134,10 +134,48 @@ class Propiedad {
         if(!$this->imagen) {
             self::$errores[] = 'La Imagen es Obligatoria';
         }
-        
-        return self::$errores;
-       
+
+        return self::$errores;       
     }
 
+    // Enumera todas los inmuebles
+    public static function all() {
+
+        $query = " SELECT * FROM propiedades "; 
+
+        $resultado = self::consultarSQL($query); // Ejecuto la query en la BBDD       
+
+        return $resultado;
+    }
+
+    // Ejecuta consulta a la bbdd retornando un array de objetos
+    public static function consultarSQL($query) {
+        // consultar bbdd
+        $resultado = self::$db->query($query); // Ejecuto la query en la BBDD
+
+        // iterar resultados
+        $array = [];
+        while($registro = $resultado->fetch_assoc()) { 
+            $array[] = self::crearObjeto($registro);
+        }
+        
+        // liberar memoria
+        $resultado->free();
+
+        // return los resultados
+        return $array;
+    }
+        
+    protected static function crearObjeto($registro) {
+        $objeto = new self;
+
+        foreach($registro as $key => $value ) {
+            if(property_exists( $objeto, $key)) {
+                $objeto->$key = $value;
+            }
+        }
+        
+        return $objeto;
+    }
 
 }
