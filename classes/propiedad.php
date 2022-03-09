@@ -148,6 +148,15 @@ class Propiedad {
         return $resultado;
     }
 
+    // Busca un registro por id
+    public static function find($id) {
+        $query = "   SELECT * FROM propiedades WHERE id = ${id} ";
+
+        $resultado = self::consultarSQL($query); // Ejecuto la query en la BBDD       
+
+        return array_shift($resultado); // Devuelve la primera posición del array
+    }
+
     // Ejecuta consulta a la bbdd retornando un array de objetos
     public static function consultarSQL($query) {
         // consultar bbdd
