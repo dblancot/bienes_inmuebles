@@ -1,6 +1,7 @@
 <?php
 
     use App\Propiedad;
+    use Intervention\Image\ImageManagerStatic as Image;
 
     // Si no está autenticado vuelve a inicio    
     require '../../includes/app.php';
@@ -19,110 +20,44 @@
     $propiedad = Propiedad::find($id);
 
     // Consulta para obtener los vendedores
-    $consulta = "   SELECT *   
-                    FROM vendedores
-                ";
+    $consulta = "SELECT * FROM vendedores;";
     $resultado = mysqli_query($db, $consulta); 
-    
-    // Array con mensajes de errores
-    $errores = [];  
+  
+    // Inicializa Array con mensajes de errores
+    $errores = Propiedad::getErrores();  
 
     // Ejecuta el código cuando el usuario pulsa "Crear Propiedad"
-    if($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        // asigno el valor del formulario a las variables
-        $titulo = mysqli_real_escape_string( $db, $_POST['titulo'] );
-        $precio = mysqli_real_escape_string( $db, $_POST['precio'] );
-        $descripcion = mysqli_real_escape_string( $db, $_POST['descripcion'] );
-        $habitaciones = mysqli_real_escape_string( $db, $_POST['habitaciones'] );
-        $wc = mysqli_real_escape_string( $db, $_POST['wc'] );
-        $estacionamiento = mysqli_real_escape_string( $db, $_POST['estacionamiento'] );
-        $vendedorID = mysqli_real_escape_string( $db, $_POST['vendedor'] );
-        $creado = date('Y/m/d');
-
-        // Asignar files hacia una variable
-        $imagen = $_FILES['imagen'];
+    if($_SERVER['REQUEST_METHOD'] === 'POST') {        
+       
+        // Asignar los atributos
+        $args = $_POST['propiedad'];
         
-        // Añadiendo los errores al array
-        if(!$titulo) {
-            $errores[] = "Debes añadir un título";
-        }
+        $propiedad->sincronizar($args);
 
-        if(!$precio) {
-            $errores[] = "El precio es obligatorio";
-        }
+        // Validación
+        $errores = $propiedad->validar();
 
-        if( strlen($descripcion) < 50) {
-            $errores[] = "La descripción es obligatoria y debe tener al menos 50 caracteres";
-        }
-
-        if(!$habitaciones) {
-            $errores[] = "El número de habitaciones es obligatorio";
-        }
-
-        if(!$wc) {
-            $errores[] = "El número de baños es obligatorio";
-        }
-
-        if(!$estacionamiento) {
-            $errores[] = "El número de plazas de garaje es obligatorio";
-        }
-
-        if(!$vendedorID) {
-            $errores[] = "Elige un vendedor";
-        }
+        // ## SUBIDA DE ARCHIVOS ##
+        // Generar nombre único para las imagenes que se suben
+        $nombreImagen = md5( uniqid( rand(), true)) . ".jpg";
         
-        //Validar por tamaño (1Mb máximo)
-        $medida = 1000 * 1000;
-        if($imagen['size'] > $medida) {
-            $errores[] = 'La imagen tiene que ser menor de 100Kb';
+        //  Si existe imagen, se le hace resize con intervention
+        if($_FILES['propiedad']['tmp_name']['imagen']) {
+
+            $image = Image::make($_FILES['propiedad']['tmp_name']['imagen'])->fit(800,600);
+
+            // Seteo el nombre de la imagen en la instacia de la clase
+            $propiedad->setImagen($nombreImagen);
         }
 
         // Revisar que el array de errores está vacía, si  no hay errores subimos archivo e insertamos en la bbdd
-        if(empty($errores)){
+        if(empty($errores)){      
 
-            // ** SUBIDA DE ARCHIVOS ** //
+            // Guarda la imagen en el servidor
+            $image->save(CARPETA_IMAGENES . $nombreImagen);
 
-            // Crear carpeta
-            $carpetaImagenes = '../../imagenes/';
-
-            if(!is_dir($carpetaImagenes)) {
-                mkdir($carpetaImagenes);
-            }
-
-            // Si se sube una nueva imagen, borramos la existente y cargamos la nueva
-            if($imagen['name']) {
-                unlink($carpetaImagenes . $propiedad['imagen']);
-
-                // Generar nombre único para las imagenes que se suben
-                $nombreImagen = md5( uniqid( rand(), true)) . ".jpg";
-
-                // Subir la imagen
-                move_uploaded_file( $imagen['tmp_name'], $carpetaImagenes . $nombreImagen );
-            } else {
-                $nombreImagen = $propiedad['imagen'];
-            }           
-
-            // Insertar en la base de datos
-            $query = "  UPDATE propiedades 
-                        SET titulo = '${titulo}'
-                            ,precio = '${precio}'
-                            ,imagen = '${nombreImagen}' 
-                            ,descripcion = '${descripcion}'
-                            ,habitaciones = ${habitaciones}    
-                            ,wc = ${wc} 
-                            ,estacionamiento = ${estacionamiento} 
-                            ,vendedorID = ${vendedorID}
-                        WHERE id = ${id}  
-                        ";
-                      
-            // Ejecuta la consulta $query en la bbdd %db
-            $resultado = mysqli_query($db, $query); 
-
-            // Redireccionar enviando resultado = 1 por el GET
-            if($resultado) {               
-                header('Location: /admin?resultado=2');
-            }
+            // Actualiza el registro
+            $propiedad->guardar();            
         } 
     }
        

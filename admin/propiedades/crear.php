@@ -22,15 +22,15 @@
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Instancio la propiedad
-        $propiedad = new Propiedad($_POST);        
+        $propiedad = new Propiedad($_POST['propiedad']);        
 
         // Generar nombre único para las imagenes que se suben
         $nombreImagen = md5( uniqid( rand(), true)) . ".jpg";
 
         //  Si existe imagen, se le hace resize con intervention
-        if($_FILES['imagen']['tmp_name']) {
+        if($_FILES['propiedad']['tmp_name']['imagen']) {
 
-            $image = Image::make($_FILES['imagen']['tmp_name'])->fit(800,600);
+            $image = Image::make($_FILES['propiedad']['tmp_name']['imagen'])->fit(800,600);
 
             // Seteo el nombre de la imagen en la instacia de la clase
             $propiedad->setImagen($nombreImagen);
@@ -50,12 +50,7 @@
             $image->save(CARPETA_IMAGENES . $nombreImagen);
             
             // Guarda la propiedad en la bbdd
-            $resultado = $propiedad->guardar();
-           
-            if($resultado) {
-                // Redireccionar
-                header('Location: /admin?resultado=1');
-            }
+            $propiedad->guardar();                
         }  
     }
      

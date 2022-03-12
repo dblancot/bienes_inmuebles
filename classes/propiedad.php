@@ -47,8 +47,18 @@ class Propiedad {
         $this->vendedorID = $args['vendedorID'] ??  '';        
     }
 
+    public function guardar(){
+        if(isset($this->id)) {
+            // Actualizar
+            $this->actualizar();
+        } else {
+            // Creando nuevo registro
+            $this->crear();
+        }
+    } 
+
     // Guardar en la BBDD
-    public function guardar(){  
+    public function crear(){  
         
         // Sanitizar datos
         $atributos = $this->sanitizarAtributos();
@@ -61,7 +71,34 @@ class Propiedad {
 
         $resultado = self::$db->query($query); // Ejecuto la query en la BBDD
 
-        return $resultado;
+        if($resultado) {
+            // Redireccionar
+            header('Location: /admin?resultado=1');
+        }
+    }
+
+    public function actualizar(){
+
+        // Sanitizar datos
+        $atributos = $this->sanitizarAtributos();
+
+        $valores = [];
+        foreach($atributos as $key => $value ) {
+            $valores[] = "{$key}='{$value}'";
+        }
+
+        // Insertar en la base de datos
+        $query = "UPDATE propiedades SET ";
+        $query .= join(', ', $valores);
+        $query .= " WHERE id = '" . self::$db->escape_string($this->id) . "' ";
+        $query .= "LIMIT 1 ";
+        
+        $resultado = self::$db->query($query); // Ejecuto la query en la BBDD
+
+        // Redireccionar enviando resultado = 1 por el GET
+        if($resultado) {               
+            header('Location: /admin?resultado=2');
+        }     
     }
 
     // Meto en el array $atributos el valor de cada columna
@@ -88,11 +125,19 @@ class Propiedad {
 
     // Subida de archivos
     public function setImagen($imagen){
-        // Asigna al atributo imagen el nombre de la imagen.
+        
         if($imagen) {
+            //Elimina la imagen previa
+            if(isset($this->id)) { // Si hay un id es porque estamos modificando el resgistro
+                $existeArchivo = file_exists(CARPETA_IMAGENES . $this->imagen);
+                if($existeArchivo) {
+                    unlink(CARPETA_IMAGENES . $this->imagen); // Borra la imagen antigua
+                }
+            }
+
+            // Asigna al atributo imagen el nombre de la imagen.
             $this->imagen = $imagen;
         }
-
     }
     
     // Validación
@@ -185,6 +230,15 @@ class Propiedad {
         }
         
         return $objeto;
+    }
+
+    // Sincroniza el objeto en memoria con los cambios realizados por el usuario
+    public function sincronizar( $args = []) {
+        foreach($args as $key => $value) {
+            if(property_exists($this, $key) && !is_null($value)) { // Si existe la key y no tiene valor nulo
+                $this->$key = $value; // actualizo el objeto $propiedad
+            }
+        }
     }
 
 }
