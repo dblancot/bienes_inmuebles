@@ -14,24 +14,12 @@
 
     // Si se pulsa el boton ELIMINAR
     if($_SERVER['REQUEST_METHOD'] === 'POST' ) {
-        $id = filter_Var($_POST['id'], FILTER_VALIDATE_INT);
+        
+        $id = filter_var($_POST['id'], FILTER_VALIDATE_INT);
 
         if($id) {
-
-            // Elimina el archivo de la imagen
-            $query = "SELECT imagen FROM propiedades WHERE id = ${id}";
-            $resultado = mysqli_query($db, $query);
-            $propiedad = mysqli_fetch_assoc($resultado);
-            unlink('../imagenes/' . $propiedad['imagen']);
-
-            // Elimina la propiedad
-            $query = "DELETE FROM propiedades WHERE id = ${id}";
-            $resultado = mysqli_query($db, $query); 
-
-            if($resultado) {               
-                header('Location: /admin?resultado=3');
-            }
-
+            $propiedad = Propiedad::find($id);
+            $propiedad->eliminar();
         }
     }
 

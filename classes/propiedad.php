@@ -35,7 +35,7 @@ class Propiedad {
     // Constructor
     public function __construct($args = [])
     {
-        $this->id = $args['id'] ??  '';
+        $this->id = $args['id'] ??  null;
         $this->titulo = $args['titulo'] ??  '';
         $this->precio = $args['precio'] ??  '';
         $this->imagen = $args['imagen'] ??  '';
@@ -48,7 +48,7 @@ class Propiedad {
     }
 
     public function guardar(){
-        if(isset($this->id)) {
+        if(!is_null($this->id)) {
             // Actualizar
             $this->actualizar();
         } else {
@@ -101,6 +101,20 @@ class Propiedad {
         }     
     }
 
+    // Eliminar un resgistro
+    public function eliminar() {
+
+        // Elimina la propiedad
+        $query = "DELETE FROM propiedades WHERE id = " . self::$db->escape_string($this->id) . " LIMIT 1";
+
+        $resultado = self::$db->query($query); // Ejecuto la query en la BBDD
+
+        if($resultado) {  
+            $this->borrarImagen();             
+            header('Location: /admin?resultado=3');
+        }
+    }
+
     // Meto en el array $atributos el valor de cada columna
     public function atributos() {
         $atributos = [];
@@ -127,16 +141,21 @@ class Propiedad {
     public function setImagen($imagen){
         
         if($imagen) {
-            //Elimina la imagen previa
-            if(isset($this->id)) { // Si hay un id es porque estamos modificando el resgistro
-                $existeArchivo = file_exists(CARPETA_IMAGENES . $this->imagen);
-                if($existeArchivo) {
-                    unlink(CARPETA_IMAGENES . $this->imagen); // Borra la imagen antigua
-                }
+            //Elimina la imagen previa            
+            if(!is_null($this->id)) { // Si hay un id es porque estamos modificando el resgistro
+                $this->borrarImagen();                
             }
 
             // Asigna al atributo imagen el nombre de la imagen.
             $this->imagen = $imagen;
+        }
+    }
+
+    // Eliminar imagen
+    public function borrarImagen(){
+        $existeArchivo = file_exists(CARPETA_IMAGENES . $this->imagen);
+        if($existeArchivo) {
+            unlink(CARPETA_IMAGENES . $this->imagen); // Borra la imagen antigua
         }
     }
     

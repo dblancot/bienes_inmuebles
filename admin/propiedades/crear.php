@@ -11,6 +11,8 @@
     
     $db = conectarDB();
 
+    $propiedad = new Propiedad;
+
     // Consulta para obtener los vendedores
     $consulta = "SELECT * FROM vendedores;";
     $resultado = mysqli_query($db, $consulta); 
