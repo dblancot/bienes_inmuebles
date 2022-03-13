@@ -5,16 +5,18 @@
     estaAutenticado();
 
     use App\Propiedad;
+    use App\Vendedor;
 
-    // Escribir la Query
+    // Obtener todos los registros (Array de objetos)
     $propiedades = Propiedad::all();
+    $vendedores = Vendedor::all();
 
     // guardo lo que me llega por la url
     $resultado = $_GET['resultado'] ?? null; // busca el valor y si no existe le asigna null
 
     // Si se pulsa el boton ELIMINAR
     if($_SERVER['REQUEST_METHOD'] === 'POST' ) {
-        
+
         $id = filter_var($_POST['id'], FILTER_VALIDATE_INT);
 
         if($id) {

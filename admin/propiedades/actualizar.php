@@ -50,9 +50,9 @@
             $propiedad->setImagen($nombreImagen);
         }
 
-        // Revisar que el array de errores está vacía, si  no hay errores subimos archivo e insertamos en la bbdd
-        if(empty($errores)){      
-
+        // Revisar que el array de errores está vacía, si no hay errores subimos archivo e insertamos en la bbdd
+        if(empty($errores)){        
+           
             // Guarda la imagen en el servidor
             $image->save(CARPETA_IMAGENES . $nombreImagen);
 

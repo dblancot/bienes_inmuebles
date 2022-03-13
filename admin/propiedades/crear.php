@@ -4,18 +4,16 @@
     require '../../includes/app.php';
 
     use App\Propiedad;
+    use App\Vendedor;
     use Intervention\Image\ImageManagerStatic as Image;
 
     // Si no está autenticado lo mando al index
     estaAutenticado();
-    
-    $db = conectarDB();
 
     $propiedad = new Propiedad;
 
     // Consulta para obtener los vendedores
-    $consulta = "SELECT * FROM vendedores;";
-    $resultado = mysqli_query($db, $consulta); 
+    $vendedores = Vendedor::all();
     
     // Inicialización de Array con mensajes de errores para que no sea undefined
     $errores = Propiedad::getErrores();
