@@ -17,6 +17,8 @@
     // Si se pulsa el boton ELIMINAR
     if($_SERVER['REQUEST_METHOD'] === 'POST' ) {
 
+        debug($_POST);
+
         $id = filter_var($_POST['id'], FILTER_VALIDATE_INT);
 
         if($id) {
@@ -42,7 +44,8 @@
         <?php endif; ?>
 
         <a href="/admin/propiedades/crear.php" class="boton boton-verde">Nueva Propiedad</a>
-
+         
+        <h2>Propiedades</h2>
         <table class="propiedades">
                 <thead>
                     <tr>
@@ -73,12 +76,38 @@
                 </tbody>
         </table>
 
+        <h2>Vendedores</h2>
+        <table class="propiedades">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody> <!-- Mostrar los Resultados -->
+                    <?php foreach( $vendedores as $vendedor ) : ?>
+                    <tr>
+                        <td> <span class="id"><?php echo $vendedor->id; ?> </span></td>
+                        <td> <?php echo $vendedor->nombre . " " . $vendedor->apellido ; ?> </td>                        
+                        <td> <?php echo $vendedor->telefono; ?> </td>
+                        <td>                            
+                            <form method="POST">
+                                <input type="hidden" name="id" value="<?php echo $vendedor->id; ?>">
+                                <input type="submit" class="boton-rojo-block" value="Eliminar">
+                            </form>
+                            <a href="admin/vendedores/actualizar.php?id=<?php echo $vendedor->id; ?>" class="boton-amarillo-block">Actualizar</a>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+        </table>
+
     </main>
 
 <?php 
-
-    //Cerrar la conexión
-    mysqli_close($db);
 
     incluirTemplate('footer');
 ?>
