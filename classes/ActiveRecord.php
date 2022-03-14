@@ -93,7 +93,7 @@ class ActiveRecord {
     // Meto en el array $atributos el valor de cada columna
     public function atributos() {
         $atributos = [];
-        foreach(self::$columnasDB as $columna) {
+        foreach(static::$columnasDB as $columna) {
             if($columna === 'id') continue; // ignoro la columna id
             $atributos[$columna] = $this->$columna;
         }
@@ -171,7 +171,7 @@ class ActiveRecord {
         // iterar resultados
         $array = [];
         while($registro = $resultado->fetch_assoc()) { 
-            $array[] = self::crearObjeto($registro);
+            $array[] = static::crearObjeto($registro);
         }
         
         // liberar memoria

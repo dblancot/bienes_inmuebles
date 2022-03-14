@@ -8,8 +8,8 @@ require __DIR__ . '/../vendor/autoload.php'; // Cargo autoload de classes
 // Conexión a la bbdd
 $db = conectarDB();
 
-use App\Propiedad;
+use App\ActiveRecord;
 
-Propiedad::setDB($db);
+ActiveRecord::setDB($db);
 
 

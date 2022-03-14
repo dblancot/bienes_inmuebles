@@ -1,6 +1,7 @@
 <?php
 
     use App\Propiedad;
+    use App\Vendedor;
     use Intervention\Image\ImageManagerStatic as Image;
 
     // Si no está autenticado vuelve a inicio    
@@ -20,8 +21,7 @@
     $propiedad = Propiedad::find($id);
 
     // Consulta para obtener los vendedores
-    $consulta = "SELECT * FROM vendedores;";
-    $resultado = mysqli_query($db, $consulta); 
+    $vendedores = Vendedor::all();
   
     // Inicializa Array con mensajes de errores
     $errores = Propiedad::getErrores();  
@@ -51,13 +51,16 @@
         }
 
         // Revisar que el array de errores está vacía, si no hay errores subimos archivo e insertamos en la bbdd
-        if(empty($errores)){        
-           
-            // Guarda la imagen en el servidor
-            $image->save(CARPETA_IMAGENES . $nombreImagen);
+        if(empty($errores)){   
+            
+            if($_FILES['propiedad']['tmp_name']['imagen']) {           
+                // Guarda la imagen en el servidor
+                $image->save(CARPETA_IMAGENES . $nombreImagen);
+            }
 
             // Actualiza el registro
-            $propiedad->guardar();            
+            $propiedad->guardar();              
+            
         } 
     }
        
