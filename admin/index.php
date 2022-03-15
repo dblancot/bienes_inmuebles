@@ -15,15 +15,30 @@
     $resultado = $_GET['resultado'] ?? null; // busca el valor y si no existe le asigna null
 
     // Si se pulsa el boton ELIMINAR
-    if($_SERVER['REQUEST_METHOD'] === 'POST' ) {
-
-        debug($_POST);
+    if($_SERVER['REQUEST_METHOD'] === 'POST' ) {    
 
         $id = filter_var($_POST['id'], FILTER_VALIDATE_INT);
 
         if($id) {
-            $propiedad = Propiedad::find($id);
-            $propiedad->eliminar();
+
+            $tipo = $_POST['tipo'];
+
+            if(validarTipoContenido($tipo)) {
+
+                if($tipo === 'propiedad') {
+
+                    $propiedad = Propiedad::find($id);
+                    $propiedad->eliminar();
+    
+                } else if($tipo === 'vendedor') {
+    
+                    $vendedor = Vendedor::find($id);
+                    $vendedor->eliminar();
+    
+                }
+
+            }          
+
         }
     }
 
@@ -67,6 +82,7 @@
                         <td>                            
                             <form method="POST">
                                 <input type="hidden" name="id" value="<?php echo $propiedad->id; ?>">
+                                <input type="hidden" name="tipo" value="propiedad">
                                 <input type="submit" class="boton-rojo-block" value="Eliminar">
                             </form>
                             <a href="admin/propiedades/actualizar.php?id=<?php echo $propiedad->id; ?>" class="boton-amarillo-block">Actualizar</a>
@@ -96,6 +112,7 @@
                         <td>                            
                             <form method="POST">
                                 <input type="hidden" name="id" value="<?php echo $vendedor->id; ?>">
+                                <input type="hidden" name="tipo" value="vendedor">
                                 <input type="submit" class="boton-rojo-block" value="Eliminar">
                             </form>
                             <a href="admin/vendedores/actualizar.php?id=<?php echo $vendedor->id; ?>" class="boton-amarillo-block">Actualizar</a>
