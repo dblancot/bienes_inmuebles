@@ -51,11 +51,11 @@
 
         <!-- Si se creó el anuncio lo muestro -->
         <?php if( intval( $resultado ) === 1): ?>
-            <p class="alerta exito">Anuncio Creado Correctamente</p>
+            <p class="alerta exito">Creado Correctamente</p>
         <?php elseif( intval( $resultado ) === 2): ?>
-            <p class="alerta exito">Anuncio Modificado Correctamente</p>
+            <p class="alerta exito">Modificado Correctamente</p>
         <?php elseif( intval( $resultado ) === 3): ?>
-        <p class="alerta exito">Anuncio Eliminado Correctamente</p>     
+        <p class="alerta exito">Eliminado Correctamente</p>     
         <?php endif; ?>                
          
         <h2>Propiedades</h2>
