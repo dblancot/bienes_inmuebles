@@ -56,9 +56,7 @@
             <p class="alerta exito">Anuncio Modificado Correctamente</p>
         <?php elseif( intval( $resultado ) === 3): ?>
         <p class="alerta exito">Anuncio Eliminado Correctamente</p>     
-        <?php endif; ?>
-
-        <a href="/admin/propiedades/crear.php" class="boton boton-verde">Nueva Propiedad</a>
+        <?php endif; ?>                
          
         <h2>Propiedades</h2>
         <table class="propiedades">
@@ -91,6 +89,9 @@
                     <?php endforeach; ?>
                 </tbody>
         </table>
+        <a href="/admin/propiedades/crear.php" class="boton boton-verde">Nueva Propiedad</a>
+
+        
 
         <h2>Vendedores</h2>
         <table class="propiedades">
@@ -121,6 +122,7 @@
                     <?php endforeach; ?>
                 </tbody>
         </table>
+        <a href="/admin/vendedores/crear.php" class="boton boton-verde">Nuevo Vendedor</a>
 
     </main>
 

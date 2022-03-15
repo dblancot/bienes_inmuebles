@@ -1,6 +1,5 @@
 <?php
 
-    // Si no está autenticado vuelve a inicio
     require '../../includes/app.php';
 
     use App\Propiedad;
@@ -58,26 +57,26 @@
 
 ?>
 
-    <main class="contenedor seccion">
-        <h1>Crear</h1>
+<main class="contenedor seccion">
+    <h1>Crear</h1>
 
-        <a href="/admin" class="boton boton-verde">Volver</a>
+    <a href="/admin" class="boton boton-verde">Volver</a>
 
-        <!-- Inserto los errores en pantalla -->
-        <?php foreach($errores as $error): ?>
-        <div class="alerta error">
-            <?php echo $error; ?> 
-        </div>                   
-        <?php endforeach; ?>     
+    <!-- Inserto los errores en pantalla -->
+    <?php foreach($errores as $error): ?>
+    <div class="alerta error">
+        <?php echo $error; ?> 
+    </div>                   
+    <?php endforeach; ?>     
 
-        <form class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data" >
-            <?php include '../../includes/templates/formulario_propiedades.php'; ?>
+    <form class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data" >
+        <?php include '../../includes/templates/formulario_propiedades.php'; ?>
 
-            <input type="submit" value="Crear Propiedad" class="boton boton-verde">
+        <input type="submit" value="Crear Propiedad" class="boton boton-verde">
 
-        </form>
-        
-    </main>
+    </form>
+    
+</main>
 
 <?php 
     incluirTemplate('footer');
