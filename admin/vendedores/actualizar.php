@@ -7,14 +7,38 @@ use App\Vendedor;
 // Si no está autenticado lo mando al index
 estaAutenticado();
 
-// Nuevo objeto
-$vendedor = new Vendedor;
+// Guardo la id del vendedor a modificar en una variable (después de sanitizarla)
+$id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
+
+// Si la id no es un INT redirecciono a página principal
+if(!$id) {
+    header('Location: /admin');
+} 
+
+// Consulta para obtener los datos de la vendedor
+$vendedor = Vendedor::find($id);
 
 // Inicialización de Array con mensajes de errores para que no sea undefined
 $errores = Vendedor::getErrores();
 
-// Ejecuta el código cuando el usuario pulsa "Crear Propiedad"
+// Ejecuta el código cuando el usuario pulsa "Crear vendedor"
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Asignar los atributos
+    $args = $_POST['vendedor'];
+        
+    // Sincronizar el objeto en memoria con lo que el usuario escribió.
+    $vendedor->sincronizar($args);
+
+    // Validación
+    $errores = $vendedor->validar();
+   
+    // Revisar que el array de errores está vacía, si no hay errores insertamos en la bbdd
+    if(empty($errores)){           
+
+        // Actualiza el registro
+        $vendedor->guardar();
+    }    
 
 }
 
