@@ -4,6 +4,7 @@
     require '../includes/app.php'; 
     estaAutenticado();
 
+    // Importar las clases
     use App\Propiedad;
     use App\Vendedor;
 
@@ -15,8 +16,9 @@
     $resultado = $_GET['resultado'] ?? null; // busca el valor y si no existe le asigna null
 
     // Si se pulsa el boton ELIMINAR
-    if($_SERVER['REQUEST_METHOD'] === 'POST' ) {    
+    if($_SERVER['REQUEST_METHOD'] === 'POST' ) { 
 
+        //
         $id = filter_var($_POST['id'], FILTER_VALIDATE_INT);
 
         if($id) {
@@ -36,11 +38,11 @@
                     $vendedor->eliminar();
     
                 }
-
-            }          
-
+            }  
         }
     }
+
+// ------------ HTML ------------ \\
 
     // incluye el template de header       
     incluirTemplate('header');
@@ -50,13 +52,12 @@
         <h1>Administrador de Bienes Raices</h1>
 
         <!-- Si se creó el anuncio lo muestro -->
-        <?php if( intval( $resultado ) === 1): ?>
-            <p class="alerta exito">Creado Correctamente</p>
-        <?php elseif( intval( $resultado ) === 2): ?>
-            <p class="alerta exito">Modificado Correctamente</p>
-        <?php elseif( intval( $resultado ) === 3): ?>
-        <p class="alerta exito">Eliminado Correctamente</p>     
-        <?php endif; ?>                
+        <?php 
+            $mensaje = mostrarNotificacion(intval($resultado));
+
+            if($mensaje) { ?>
+                <p class="alerta exito"><?php echo s($mensaje) ?> </p>
+            <?php } ?>                      
          
         <h2>Propiedades</h2>
         <table class="propiedades">
@@ -89,9 +90,7 @@
                     <?php endforeach; ?>
                 </tbody>
         </table>
-        <a href="/admin/propiedades/crear.php" class="boton boton-verde">Nueva Propiedad</a>
-
-        
+        <a href="/admin/propiedades/crear.php" class="boton boton-verde">Nueva Propiedad</a>        
 
         <h2>Vendedores</h2>
         <table class="propiedades">
