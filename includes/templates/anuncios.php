@@ -2,7 +2,13 @@
 
     use App\Propiedad;
 
-    $propiedades = Propiedad::all();   
+    
+    
+    if($_SERVER['SCRIPT_NAME'] === '/anuncios.php') { // Si estamos en anuncios.php
+        $propiedades = Propiedad::all();
+    } else { // si estamos en index.php
+        $propiedades = Propiedad::get(3);
+    }
 
 ?>
 
